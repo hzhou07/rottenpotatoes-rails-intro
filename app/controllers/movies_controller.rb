@@ -7,6 +7,7 @@ class MoviesController < ApplicationController
   end
 
   def index
+    @all_ratings = Movie.all_ratings
     checked = []
     unless params[:ratings].nil?
         params[:ratings].each_key do |x|
@@ -17,7 +18,7 @@ class MoviesController < ApplicationController
     if checked.empty? then
         @ratings_to_show = []
     else
-        @ratings_to_show = check
+        @ratings_to_show = checked
     end
   end
 
