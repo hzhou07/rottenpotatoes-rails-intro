@@ -8,8 +8,10 @@ class MoviesController < ApplicationController
 
   def index
     checked = []
-    params[:ratings].each_key do |x|
-        checked << x
+    unless params[:ratings].nil?
+        params[:ratings].each_key do |x|
+            checked << x
+        end
     end
     @movies = Movie.with_ratings(checked)
     if checked.empty? then
