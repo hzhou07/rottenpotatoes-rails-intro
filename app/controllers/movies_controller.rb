@@ -7,7 +7,16 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
+    checked = []
+    params[:ratings].each_key do |x|
+        checked << x
+    end
+    @movies = Movie.with_ratings(checked)
+    if checked.empty? then
+        @ratings_to_show = []
+    else
+        @ratings_to_show = check
+    end
   end
 
   def new
