@@ -7,7 +7,6 @@ class MoviesController < ApplicationController
   end
 
   def index
-#      session.clear
     @all_ratings = Movie.all_ratings
     @ratings_to_show = params[:ratings] || session[:ratings] || Hash[@all_ratings.map{|rating| [rating, 1]}]
     @sorted = params[:sort] || session[:sort]
