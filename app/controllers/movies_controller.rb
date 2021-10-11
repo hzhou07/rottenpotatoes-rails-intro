@@ -18,9 +18,16 @@ class MoviesController < ApplicationController
             @movies = Movie.all
             return
         else
-            puts '1.2'
-            @ratings_to_show = session[:ratings]
-            @sorted = session[:sort]
+            puts 'outside'
+            puts params[:outside]
+            if params[:outside]
+                @ratings_to_show = session[:ratings]
+                @sorted = session[:sort]
+            else
+                @ratings_to_show = Hash[@all_ratings.map{|rating| [rating, 1]}]
+                session[:ratings] = @ratings_to_show
+                @sorted = session[:sort]
+            end
             redirect_to movies_path({:sort=>@sorted, :ratings=>@ratings_to_show}) and return
         end
     end
