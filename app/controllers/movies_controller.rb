@@ -8,14 +8,35 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings = Movie.all_ratings
-    @ratings_to_show = params[:ratings] || session[:ratings] || Hash[@all_ratings.map{|rating| [rating, 1]}]
-    @sorted = params[:sort] || session[:sort]
-    if @ratings_to_show != session[:ratings] or @sorted != session[:sort]
-        session[:ratings] = @ratings_to_show
+    if params[:ratings].nil? and params[:sort].nil?
+        if session[:ratings].nil? and session[:sort].nil?
+            @ratings_to_show = Hash[@all_ratings.map{|rating| [rating, 1]}]
+            session[:ratings] = @ratings_to_show
+            redirect_to movies_path({:ratings=>@ratings_to_show}) and return
+        else
+            @ratings_to_show = session[:ratings]
+            @sorted = session[:sort]
+            redirect_to movies_path({:sort=>@sorted, :ratings=>@ratings_to_show}) and return
+        end
+    end
+    if params[:ratings].nil?
+        @ratings_to_show = session[:ratings]
+        @sorted = params[:sort]
         session[:sort] = @sorted
-        redirect_to sort: @sorted, ratings: @ratings_to_show and return
+        redirect_to movies_path({:sort=>@sorted, :ratings=>@ratings_to_show}) and return
+    end
+    if params[:sort].nil?
+        @sorted = session[:sort]
+        @ratings_to_show = params[:ratings]
+        session[:ratings] = @ratings_to_show
+        redirect_to movies_path({:sort=>@sorted, :ratings=>@ratings_to_show}) and return
     end
     
+    
+    @ratings_to_show = params[:ratings]
+    @sorted = params[:sort]
+    session[:ratings] = params[:ratings]
+    session[:sort] = params[:sort]
     rl=[]
     @ratings_to_show.each_key do |x|
         rl << x
