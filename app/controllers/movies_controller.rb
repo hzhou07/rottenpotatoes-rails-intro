@@ -8,17 +8,27 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings = Movie.all_ratings
-    checked = []
-    unless params[:ratings].nil?
-        params[:ratings].each_key do |x|
-            checked << x
-        end
+    @ratings_to_show = params[:ratings] || session[:ratings] || @all_ratings.map{|rating| [rating, 1]}
+    if @ratings_to_show != session[:ratings]
+        session[:ratings] = @ratings_to_show
     end
-    @movies = Movie.with_ratings(checked)
-    if checked.empty? then
-        @ratings_to_show = []
-    else
-        @ratings_to_show = checked
+    @sorted = params[:sort] || session[:sort]
+    if @sorted != session[:sort]
+        session[:sort] = @sorted
+    end
+    rl=[]
+    @ratings_to_show.each_key do |x|
+        rl << x
+    end
+    @movies = Movie.with_ratings(rl)
+    if @sorted
+        if @sorted == 'title' then
+            @title_sort = 'hilite bg-warning'
+            @movies = @movies.order(:title)
+        else
+            @date_sort = 'hilite bg-warning'
+            @movies = @movies.order(:release_date)
+        end
     end
   end
 
