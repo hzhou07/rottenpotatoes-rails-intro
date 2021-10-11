@@ -10,13 +10,13 @@ class MoviesController < ApplicationController
 #      session.clear
     @all_ratings = Movie.all_ratings
     @ratings_to_show = params[:ratings] || session[:ratings] || Hash[@all_ratings.map{|rating| [rating, 1]}]
-    if @ratings_to_show != session[:ratings]
-        session[:ratings] = @ratings_to_show
-    end
     @sorted = params[:sort] || session[:sort]
-    if @sorted != session[:sort]
+    if @ratings_to_show != session[:ratings] or @sorted != session[:sort]
+        session[:ratings] = @ratings_to_show
         session[:sort] = @sorted
+        redirect_to sort: @sorted, ratings: @ratings_to_show and return
     end
+    
     rl=[]
     @ratings_to_show.each_key do |x|
         rl << x
